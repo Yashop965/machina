@@ -62,7 +62,7 @@ const creds = [
   "RiceScan: EfficientNetV2 crop-disease detection for agriculture",
 ];
 
-const nav = [["Proof", "#proof"], ["Process", "#process"], ["Capabilities", "#capabilities"], ["Operator", "#operator"], ["FAQ", "#faq"]];
+const nav = [["Proof", "#proof"], ["Process", "#process"], ["The Math", "#estimator"], ["Capabilities", "#capabilities"], ["Operator", "#operator"], ["FAQ", "#faq"]];
 ---
 
 <Base>
@@ -262,6 +262,49 @@ const nav = [["Proof", "#proof"], ["Process", "#process"], ["Capabilities", "#ca
             <p>{p}</p>
           </div>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── the math: interactive estimator (the repetitive 80%, priced in hours) ── -->
+  <section class="section" id="estimator">
+    <div class="wrap">
+      <p class="kicker" data-reveal>The math</p>
+      <h2 class="h2" data-reveal>Do the hours, not the pitch</h2>
+      <p class="lede" data-reveal>Pick the job a human does by hand today, set the hours a week it eats, and see what the machine hands back. No retainer, no meter — a fixed price and a working demo in two weeks.</p>
+
+      <div class="est" id="estimatorBox" data-reveal>
+        <div class="est-ctrl">
+          <div class="est-jobs" role="group" aria-label="Job type">
+            <button class="est-job is-on" data-hrs="12" data-job="data pull">Data pull</button>
+            <button class="est-job" data-hrs="8" data-job="monitoring">Monitoring</button>
+            <button class="est-job" data-hrs="20" data-job="filing">Filings</button>
+          </div>
+          <div class="est-slider">
+            <label for="estHrs">HRS / WEEK SPENT TODAY</label>
+            <div class="row">
+              <input type="range" id="estHrs" class="est-range" min="1" max="40" step="1" value="12" />
+              <output id="estHrsOut">12 HRS</output>
+            </div>
+          </div>
+        </div>
+
+        <div class="est-out">
+          <div class="est-num">
+            <strong id="estWk">9.6</strong>
+            <span>hrs / week<br />the machine takes over</span>
+          </div>
+          <div class="est-num">
+            <strong id="estYr">500</strong>
+            <span>hrs / year<br />back to your people</span>
+          </div>
+          <div class="est-num est-fixed">
+            <strong>2</strong>
+            <span>weeks to a<br />working demo · fixed price</span>
+          </div>
+        </div>
+
+        <p class="est-note">Estimates, not quotes — the real scope locks in one call (step I). The machine does the repetitive 80%; judgment calls stay with you.</p>
       </div>
     </div>
   </section>

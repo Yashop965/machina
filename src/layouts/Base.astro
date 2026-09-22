@@ -352,6 +352,51 @@
           } else startTerm();
         }
 
+        // ── the math: estimator (job chips → slider → animated hours) ──
+        const estBox = document.getElementById("estimatorBox");
+        if (estBox) {
+          const slider = estBox.querySelector("#estHrs");
+          const out = estBox.querySelector("#estHrsOut");
+          const wk = estBox.querySelector("#estWk");
+          const yr = estBox.querySelector("#estYr");
+          const jobs = [...estBox.querySelectorAll(".est-job")];
+
+          function fmt(v) { return v < 10 ? v.toFixed(1) : String(Math.round(v)); }
+
+          function recompute() {
+            const hrs = +slider.value;
+            out.textContent = hrs + " HRS";
+            const targetWk = hrs * 0.8;      // the machine takes the repetitive 80%
+            const targetYr = targetWk * 52;
+            if (reduced) {
+              wk.textContent = fmt(targetWk);
+              yr.textContent = String(Math.round(targetYr));
+              return;
+            }
+            // GSAP count-up from the currently displayed values
+            const obj = { w: parseFloat(wk.textContent) || 0, y: parseFloat(yr.textContent) || 0 };
+            gsap.to(obj, { w: targetWk, duration: 0.9, ease: "power2.out",
+              onUpdate() { wk.textContent = fmt(obj.w); } });
+            gsap.to(obj, { y: targetYr, duration: 0.9, ease: "power2.out",
+              onUpdate() { yr.textContent = String(Math.round(obj.y)); } });
+          }
+
+          slider.addEventListener("input", recompute);
+          jobs.forEach((b) => b.addEventListener("click", () => {
+            jobs.forEach((x) => x.classList.toggle("is-on", x === b));
+            slider.value = b.dataset.hrs;
+            recompute();
+          }));
+          // first run: count up when the section scrolls into view
+          if (!reduced) {
+            wk.textContent = "0.0"; yr.textContent = "0";
+            ScrollTrigger.create({
+              trigger: estBox, start: "top 80%",
+              onEnter: recompute, once: true,
+            });
+          } else recompute();
+        }
+
         // ── step progress bars: fill when the process section enters view ──
         document.querySelectorAll(".step-fill").forEach((f) => {
           const pct = Math.min(100, +f.dataset.pct || 0);
