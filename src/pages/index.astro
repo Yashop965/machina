@@ -1,0 +1,347 @@
+---
+// MACHINA — single-page site · 360labs visual system (light mode, strict 3-color)
+// Content sourced from: brain (Projects/Machina/README.md, Yash.md, SIH2026 PS171)
+// Visuals modeled on 360labs.ai (properly studied 22 Sep): 1px box frame,
+// HUD meta-rows, mega-cropped wordmark, sharp hairline UI, full-bleed accent.
+import Base from "../layouts/Base.astro";
+
+const cases = [
+  {
+    num: "01",
+    title: "SIH2026 browser agent — ISRO task PS171",
+    copy: "A Chrome-extension agent that logs into live web apps, reads pages the way a person does, and completes multi-step tasks unattended. Built for India's Smart India Hackathon under ISRO, hardened beyond the deadline.",
+    tags: ["E2E agent", "PII firewall", "On-device"],
+    stats: [
+      ["240", "tests passing"],
+      ["722 → 15", "PII false positives"],
+      ["4 teams", "of engineers, 1 agent"],
+    ],
+  },
+  {
+    num: "02",
+    title: "The 48-hour ad pipeline",
+    copy: "A browser-automation stack that researches a product, writes the script, records the walkthrough, and ships a narrated ad video — the same pipeline that produced the Machina demo video in under two days.",
+    tags: ["Content ops", "Voiceover", "Zero-touch"],
+    stats: [
+      ["48h", "brief to video"],
+      ["0", "manual steps left"],
+    ],
+  },
+  {
+    num: "03",
+    title: "The PII firewall",
+    copy: "Context-aware filtering that keeps sensitive data — names, numbers, credentials — out of model context entirely. The false-positive rate went from 722 to about 15 across the full E2E suite without losing true detections.",
+    tags: ["Privacy", "Filtering", "Benchmarks"],
+    stats: [
+      ["~15", "false positives (was 722)"],
+      ["100%", "on-device, never sent"],
+    ],
+  },
+];
+
+const caps = [
+  ["Logs in", "Credentials stay on your machine. The agent handles 2FA, session expiry, and the UI quirks you'd rather not touch."],
+  ["Navigates", "It reads a page the way you do — buttons, tables, menus — not by brittle selectors that die on redesign."],
+  ["Completes", "Runs the job end to end and hands you receipts: what happened, where, and a log of every action."],
+  ["Reports", "Monitoring, pulls, and filings that used to cost an hour a day, delivered as a file or a row in your sheet."],
+];
+
+const faqs = [
+  ["How fast is the first agent running?", "A brief turns into a working agent in roughly two weeks. That's the standing offer: fixed price, working demo at week two, not a slide deck."],
+  ["Where does it run?", "Wherever you want: a local machine, your server, or a free-tier cloud box. Data and credentials don't have to leave your infrastructure."],
+  ["What can't it do?", "Anything that needs a human judgment call, legal sign-off, or a handshake. The agent does the repetitive 80% and hands the decisions to you with context."],
+  ["Is this just a chatbot wrapper?", "No. It's a browser agent — it acts inside real web applications with real accounts, under constraints (what it may touch, what it may see, when to stop), verified by automated tests before it ships."],
+  ["Why 'Machina'?", "Machina is the Latin root of 'machine'. The mark is a goddess seal — Hermes built the first machines, we build the delegation layer. One machine, your work finished."],
+];
+
+const creds = [
+  "Co-founder of a stealth SaaS platform (full-stack + AI/ML lead)",
+  "Published Indian patent — secure mobile examination system (App. 202611041006)",
+  "ISRO Smart India Hackathon — optimization & testing lead, browser-agent team",
+  "Gurtai: Gemini-powered Telegram bot with a plugin architecture",
+  "RiceScan: EfficientNetV2 crop-disease detection for agriculture",
+];
+
+const nav = [["Proof", "#proof"], ["Process", "#process"], ["Capabilities", "#capabilities"], ["Operator", "#operator"], ["FAQ", "#faq"]];
+---
+
+<Base>
+  <div class="progress" aria-hidden="true"></div>
+  <div class="readout" aria-hidden="true">
+    <span class="ro-dot"></span>
+    <span><b id="roY">Y 000</b></span>
+    <span><b id="roSec">SEC TOP</b></span>
+    <span>SYS <b>OK</b></span>
+  </div>
+
+  <!-- ── top frame: 1px box with nav + mega hero (the 360labs pattern) ── -->
+  <div class="frame" id="top">
+    <div class="topbar">
+      <div class="brand"><img src="/mark.svg" alt="Machina seal" /> MACHINA</div>
+      <nav class="nav">
+        {nav.map(([l, h]) => <a href={h}>{l}</a>)}
+      </nav>
+      <div class="top-actions">
+        <a class="btn magnetic" href="#proof">The proof</a>
+        <a class="btn btn-solid magnetic" href="#contact">Contact</a>
+      </div>
+    </div>
+
+    <section class="hero">
+      <div class="hero-meta">
+        <p class="m">You are now entering</p>
+        <p class="m">Scroll to explore</p>
+        <p class="m">AI-native web-agency &amp; automation lab</p>
+        <p class="m">© 2026 Machina</p>
+      </div>
+      <h1 class="mega">MACHINA</h1>
+    </section>
+  </div>
+
+  <!-- ── marquee: infinite CSS strip (pauses on hover) ───────── -->
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span class="item">Data pulls</span><span class="item">Monitoring</span><span class="item">Filings</span><span class="item">Reports</span><span class="item">Onboarding</span><span class="item">Reconciliation</span>
+      <span class="item">Data pulls</span><span class="item">Monitoring</span><span class="item">Filings</span><span class="item">Reports</span><span class="item">Onboarding</span><span class="item">Reconciliation</span>
+    </div>
+  </div>
+
+  <!-- ── intro: statement + lede + CTAs + positioning strip ───── -->
+  <section class="section intro">
+    <div class="seal-clip" aria-hidden="true"><div class="seal-bg right" data-speed="0.14"><img src="/mark_full.svg" alt="" /></div></div>
+    <div class="wrap">
+      <h2 class="stmt" data-reveal>Not as vendors,<br />like a machine in-house.</h2>
+      <div class="intro-grid">
+        <p class="lede" data-reveal>Machina builds web agents that log into your systems and finish the repetitive work — data pulls, monitoring, filings, reports — while your people do the thinking. One machine, accountable for every outcome, run by the engineer who built it.</p>
+        <div class="hero-row" data-reveal>
+          <a class="btn btn-solid magnetic" href="#proof">See the proof</a>
+          <a class="btn magnetic" href="#contact">Hire the machine</a>
+        </div>
+      </div>
+
+      <div class="strip" data-reveal>
+        <div class="row">
+          <div class="cell"><strong>AI-native</strong><span>Agents with constraints and receipts, not chatboxes bolted onto dashboards.</span></div>
+          <div class="cell"><strong>One machine</strong><span>A single accountable system, run and hardened by the people who build it.</span></div>
+          <div class="cell"><strong>Fixed scope</strong><span>Two weeks, a price, a working demo. No retainer maze.</span></div>
+          <div class="cell"><strong>Your rails</strong><span>Your browser, your accounts, your infrastructure. Nothing leaves it.</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── case studies: pinned horizontal journey (desktop) + stacked fallback ── -->
+  <section class="section" id="proof">
+    <div class="seal-clip" aria-hidden="true"><div class="seal-bg left tx-p1" data-speed="0.18"><img src="/part_p1.svg" alt="" /></div></div>
+    <div class="wrap">
+      <p class="kicker" data-reveal>Case studies</p>
+      <h2 class="h2" data-reveal>Proof, not promises</h2>
+
+      <!-- live run-terminal: the machine at work (video swaps in when Yash drops the .mp4) -->
+      <div class="term" id="runTerm" data-reveal>
+        <div class="term-bar">
+          <span class="term-dot"></span>
+          <span>agent.run · daily pull · <b id="termJob">run #0417</b></span>
+          <span class="term-tags" aria-hidden="true">
+            <button class="term-tab is-on" data-log="0">Data pull</button>
+            <button class="term-tab" data-log="1">Monitoring</button>
+            <button class="term-tab" data-log="2">Filing</button>
+          </span>
+        </div>
+        <pre class="term-log" id="termLog" aria-live="off"></pre>
+      </div>
+    </div>
+
+    <!-- Pinned rail (desktop) -->
+    <div class="rail">
+      <div class="rail-track">
+        {cases.map((c) => (
+          <div class="slide">
+            <span class="slide-num">{c.num}</span>
+            <h3>{c.title}</h3>
+            <p>{c.copy}</p>
+            <div class="tags">{c.tags.map((t) => <span>{t}</span>)}</div>
+            <div class="stat-row">
+              {c.stats.map(([v, l]) => (
+                <div><strong>{v}</strong><span>{l}</span></div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Stacked fallback (mobile / reduced-motion / no-JS) -->
+    <div class="wrap">
+      <div class="cases-stack">
+        {cases.map((c) => (
+          <article class="case" data-reveal>
+            <div class="num">{c.num}</div>
+            <div>
+              <h3>{c.title}</h3>
+              <p>{c.copy}</p>
+              <div class="tags">{c.tags.map((t) => <span>{t}</span>)}</div>
+              <div class="stat-row">
+                {c.stats.map(([v, l]) => (
+                  <div><strong>{v}</strong><span>{l}</span></div>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── how it works ─────────────────────────────────────────── -->
+  <section class="section" id="process">
+    <div class="seal-clip" aria-hidden="true"><div class="seal-bg right-bottom tx-lattice" data-speed="0.14"><img src="/part_geometric.svg" alt="" /></div></div>
+    <div class="wrap">
+      <p class="kicker" data-reveal>How it works</p>
+      <h2 class="h2" data-reveal>From brief to running in three moves</h2>
+      <div class="steps" data-reveal>
+        <div class="step">
+          <span class="n">I.</span>
+          <h3>You describe the job</h3>
+          <p>"Every morning, pull yesterday's numbers from X and file them in Y." One paragraph is enough — we know what our agents can and can't do.</p>
+          <div class="step-bar" aria-hidden="true"><span class="step-fill" data-pct="34"></span></div>
+          <span class="step-pct">SCOPE LOCKED · 34%</span>
+        </div>
+        <div class="step">
+          <span class="n">II.</span>
+          <h3>The machine learns the site</h3>
+          <p>It maps the flow once, shows you exactly what it will touch, and waits for the go. Credentials stay on your machine the whole time.</p>
+          <div class="step-bar" aria-hidden="true"><span class="step-fill" data-pct="67"></span></div>
+          <span class="step-pct">FLOWS MAPPED · 67%</span>
+        </div>
+        <div class="step">
+          <span class="n">III.</span>
+          <h3>It runs, you review</h3>
+          <p>Unattended runs with a log of every action. Receipts, not promises — and when something's genuinely ambiguous, it stops and asks you.</p>
+          <div class="step-bar" aria-hidden="true"><span class="step-fill" data-pct="100"></span></div>
+          <span class="step-pct">RUNNING · 100%</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── capabilities ─────────────────────────────────────────── -->
+  <section class="section" id="capabilities">
+    <div class="seal-clip" aria-hidden="true"><div class="seal-bg right tx-ring" data-speed="0.12"><img src="/part_ring.svg" alt="" /></div></div>
+    <div class="wrap">
+      <p class="kicker" data-reveal>What it does</p>
+      <h2 class="h2" data-reveal>The repetitive 80%</h2>
+      <div class="caps" style="margin-top:44px" data-reveal>
+        {caps.map(([h, p], i) => (
+          <div class="cap" data-spec={['ON-DEVICE', 'LOGGED', 'FIXED-SCOPE', 'TWO-WEEK'][i]}>
+            <span class="cap-chip" aria-hidden="true">{['ON-DEVICE', 'LOGGED', 'FIXED-SCOPE', 'TWO-WEEK'][i]}</span>
+            <h3>{h}</h3>
+            <p>{p}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── anatomy of the mark: interactive assembly of the 3 components ── -->
+  <section class="section" id="mark">
+    <div class="wrap">
+      <p class="kicker" data-reveal>The mark</p>
+      <h2 class="h2" data-reveal>Three parts. One machine.</h2>
+      <div class="anatomy-grid" data-reveal>
+        <div class="anat-stage" id="anatStage" data-part="lattice">
+          <canvas class="anat-3d" id="anatCanvas" aria-hidden="true"></canvas>
+          <div class="face-knockout" aria-hidden="true"></div>
+          <div class="anat-part p-ring" data-part="ring"><img src="/part_ring.svg" alt="" /></div>
+          <div class="anat-part p-lattice" data-part="lattice"><img src="/part_geometric.svg" alt="" /></div>
+          <div class="anat-part p-face" data-part="face"><img src="/part_face.svg" alt="" /></div>
+        </div>
+        <div class="anat-list">
+          <div class="anat-row" data-part="ring">
+            <span class="idx">01</span>
+            <div><h3>The ring</h3><p>Two arcs, one break, one dot. The frame that says the machine is open — not sealed shut.</p></div>
+            <span class="state">Spinning · 90s</span>
+          </div>
+          <div class="anat-row" data-part="lattice">
+            <span class="idx">02</span>
+            <div><h3>The lattice</h3><p>379 interlocked strokes — the web behind everything we build. Scrub it with your scroll.</p></div>
+            <span class="state">Scroll-scrubbed</span>
+          </div>
+          <div class="anat-row" data-part="face">
+            <span class="idx">03</span>
+            <div><h3>The face</h3><p>The goddess — the human in the loop. She floats; she's the only organic curve in the system.</p></div>
+            <span class="state">Breathing</span>
+          </div>
+          <p class="anat-caption">Hover a part to isolate it · Move your cursor over the stage — the parts drift</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── about / operator ─────────────────────────────────────── -->
+  <section class="section about" id="operator">
+    <div class="seal-clip" aria-hidden="true"><div class="seal-bg left-top tx-face" data-speed="0.16"><img src="/part_face.svg" alt="" /></div></div>
+    <div class="wrap">
+      <div class="about-grid">
+        <div data-reveal>
+          <img src="/mark.svg" class="about-mark" alt="Machina seal" />
+        </div>
+        <div data-reveal>
+          <p class="kicker">The operator</p>
+          <h2 class="h2">Human in the loop.<br />Machine in the seat.</h2>
+          <p><strong>Machina is built and run by one engineer</strong> — Yash, co-founder of a stealth SaaS, who led optimization and testing on the ISRO Smart India Hackathon browser-agent and published an Indian patent on secure mobile examination systems.</p>
+          <p>The agency model is honest: a small system of agents doing the grunt work of building, testing, and shipping, with a human accountable for every outcome. No 40-person agency overhead — that's the price.</p>
+          <ul class="creds">
+            {creds.map((c) => <li>{c}</li>)}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ ──────────────────────────────────────────────────── -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <p class="kicker" data-reveal>FAQ</p>
+      <h2 class="h2" data-reveal>Asked before, answered</h2>
+      <div class="faq" data-reveal>
+        {faqs.map(([q, a]) => (
+          <details>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── contact: full-bleed indigo block ─────────────────────── -->
+  <section class="contact" id="contact">
+    <img class="contact-seal" src="/mark_full_dark.svg" alt="" aria-hidden="true" />
+    <h2 data-reveal>Put a machine on the boring stuff</h2>
+    <p data-reveal>Fixed scope. Two weeks. Working demo.</p>
+    <a class="mail" href="mailto:hello@getmachina.com" data-reveal>hello@getmachina.com</a>
+    <div class="contact-sub">
+      <a href="https://github.com/Yashop965">GitHub</a>
+      <a href="https://x.com">X</a>
+    </div>
+  </section>
+
+  <!-- ── footer: HUD meta-grid + mega anchor + legal line ─────── -->
+  <footer>
+    <div class="foot-meta">
+      <div class="fm"><b>You are here</b><span>getmachina.com</span></div>
+      <div class="fm"><b>Studio</b><span>One machine · fixed scope</span></div>
+      <div class="fm"><b>Work</b><span><a href="#proof">Proof &amp; case studies</a></span></div>
+      <div class="fm"><b>Contact</b><span><a href="mailto:hello@getmachina.com">hello@getmachina.com</a></span></div>
+    </div>
+    <div class="mega-foot">
+      <div class="mega">MACHINA</div>
+    </div>
+    <div class="legal">
+      <span class="l"><img src="/favicon-32.png" alt="Machina seal" /> MACHINA</span>
+      <span>© 2026 Machina · One machine, the work finished</span>
+      <span class="l"><a href="https://github.com/Yashop965">GitHub</a> · <a href="https://x.com">X</a></span>
+    </div>
+  </footer>
+</Base>

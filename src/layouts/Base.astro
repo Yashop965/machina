@@ -1,0 +1,326 @@
+---
+// MACHINA base layout — 360labs visual system: sharp, hairline, HUD micro-type
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Machina — One machine, the work finished</title>
+    <meta
+      name="description"
+      content="Machina is a one-machine agency: web agents that log into your systems and finish the repetitive work — data pulls, monitoring, reporting — while your people think."
+    />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/global.css" />
+    <script is:inline>
+      // QA params: ?revealall (skip scroll-reveal) · ?measure (report overflow in <title>)
+      const init = () => {
+        if (location.search.includes("revealall")) {
+          document.querySelectorAll("[data-reveal]").forEach((el) => el.classList.add("in"));
+        }
+        if (location.search.includes("measure")) {
+          const de = document.documentElement;
+          let out = "MW:" + de.scrollWidth + " W:" + window.innerWidth;
+          document.querySelectorAll(".hero-meta .m").forEach((el, i) => {
+            const r = el.getBoundingClientRect();
+            out += " M" + i + "R:" + Math.round(r.right) + (r.right > de.clientWidth ? "!" : "");
+            out += " S" + el.scrollWidth + ">" + el.clientWidth;
+          });
+          out += " OW:" + (de.scrollWidth > de.clientWidth ? "YES" : "no");
+          document.title = out;
+        }
+      };
+      if (document.readyState === "loading") window.addEventListener("DOMContentLoaded", init, { once: true });
+      else init();
+    </script>
+  </head>
+  <body>
+    <slot />
+    <script>
+      import gsap from "gsap";
+      import { ScrollTrigger } from "gsap/ScrollTrigger";
+      import Lenis from "lenis";
+      gsap.registerPlugin(ScrollTrigger); // required before any ScrollTrigger usage
+
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const revealAll = location.search.includes("revealall");
+
+      // ── reveal-on-scroll (CSS-class driven, restrained) ─────
+      const els = document.querySelectorAll("[data-reveal]");
+      if (reduced || revealAll) {
+        els.forEach((el) => el.classList.add("in"));
+      } else {
+        els.forEach((el) =>
+          ScrollTrigger.create({ trigger: el, start: "top 88%", onEnter: () => el.classList.add("in") })
+        );
+      }
+
+      if (!reduced) {
+        // ── Lenis smooth scroll (native mode: window stays the scroller) ──
+        const lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 1 });
+        gsap.ticker.add((t) => lenis.raf(t * 1000));
+        gsap.ticker.lagSmoothing(0);
+        lenis.on("scroll", ScrollTrigger.update);
+
+        // anchor links → smoothed jumps
+        document.querySelectorAll('a[href^="#"]').forEach((a) => {
+          a.addEventListener("click", (e) => {
+            const t = document.querySelector(a.getAttribute("href"));
+            if (t) { e.preventDefault(); lenis.scrollTo(t, { duration: 1 }); }
+          });
+        });
+
+        // ── hero mega wordmark: scrubbed exit (cinematic) ─────
+        gsap.to(".frame .mega", {
+          yPercent: -30, autoAlpha: 0.15, ease: "none",
+          scrollTrigger: { trigger: ".frame", start: "top top", end: "bottom 25%", scrub: true },
+        });
+
+        // ── seal textures: scrubbed parallax (single mark per section, minimal) ──
+        document.querySelectorAll(".seal-bg, .contact-seal").forEach((el) => {
+          const speed = parseFloat(el.dataset.speed || "0.12");
+          gsap.to(el, {
+            y: () => speed * 420, ease: "none",
+            scrollTrigger: { trigger: el.closest("section") || el.parentElement, start: "top bottom", end: "bottom top", scrub: true },
+          });
+        });
+        // part-specific: lattice slowly scrub-rotates in its section (scroll = hand on the wheel)
+        document.querySelectorAll(".tx-lattice img, .tx-p1 img").forEach((img, i) => {
+          gsap.to(img, {
+            rotation: i === 0 ? 40 : -25, ease: "none",
+            scrollTrigger: {
+              trigger: img.closest("section"),
+              start: "top 90%", end: "bottom 10%", scrub: 0.8,
+            },
+          });
+        });
+        // ── terminal readout: live data (Nous style) — Y / active section / sys ──
+        const ro = document.getElementById("roY");
+        const roSec = document.getElementById("roSec");
+        if (ro) {
+          const secs = [...document.querySelectorAll("section[id], .section.intro")];
+          const upd = () => {
+            const max = document.documentElement.scrollHeight - innerHeight;
+            ro.textContent = "Y " + String(Math.round((scrollY / max) * 100)).padStart(3, "0");
+            let cur = "TOP";
+            for (const s of secs) {
+              const r = s.getBoundingClientRect();
+              if (r.top <= innerHeight * 0.5 && r.bottom > innerHeight * 0.5) {
+                cur = (s.id || "INTRO").toUpperCase(); break;
+              }
+            }
+            roSec.textContent = "SEC " + cur;
+          };
+          if (lenis) lenis.on("scroll", upd); else addEventListener("scroll", upd, { passive: true });
+          upd();
+        }
+
+        // ── stat counts rise in stagger when their case enters ──
+        document.querySelectorAll(".case").forEach((c) => {
+          gsap.from(c.querySelectorAll(".stat-row div > *"), {
+            opacity: 0, y: 22, duration: 0.6, stagger: 0.1, ease: "power2.out",
+            scrollTrigger: { trigger: c, start: "top 82%" },
+          });
+        });
+        // ── case-study rail: pinned horizontal journey (desktop) ──
+        const rail = document.querySelector(".rail");
+        if (rail) {
+          const track = rail.querySelector(".rail-track");
+          gsap.to(track, {
+            x: () => -(track.scrollWidth - window.innerWidth),
+            ease: "none",
+            scrollTrigger: {
+              trigger: rail, start: "top top",
+              end: () => "+=" + (track.scrollWidth - window.innerWidth),
+              scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true,
+            },
+          });
+        }
+
+        // ── scroll progress hairline (driven by Lenis) ─────────
+        const bar = document.querySelector(".progress");
+        if (bar) {
+          const setBar = () => {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+          };
+          lenis.on("scroll", setBar);
+          setBar();
+        }
+
+        // ── magnetic buttons (pointer:fine only, per skill) ────
+        if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+          document.querySelectorAll(".magnetic").forEach((el) => {
+            el.addEventListener("mousemove", (e) => {
+              const r = el.getBoundingClientRect();
+              const x = e.clientX - r.left - r.width / 2;
+              const y = e.clientY - r.top - r.height / 2;
+              gsap.to(el, { x: x * 0.18, y: y * 0.18, duration: 0.25, ease: "power2.out" });
+            });
+            el.addEventListener("mouseleave", () => {
+              gsap.to(el, { x: 0, y: 0, duration: 0.4, ease: "elastic.out(1, 0.5)" });
+            });
+          });
+        }
+        // ── anatomy of the mark: the 3 components come alive ──
+        const stage = document.getElementById("anatStage");
+        const anatCanvas = document.getElementById("anatCanvas");
+        // 3D depth stage (three.js, code-split + lazy-loaded near #mark);
+        // the flat 2D parts below are the no-WebGL / reduced-motion fallback.
+        if (stage && anatCanvas && !reduced) {
+          const lazyLoad3D = () =>
+            import("../scripts/anat3d.js")
+              .then((m) => m.initAnat3D(stage, anatCanvas))
+              .catch(() => {}); // texture/webgl failure → stay 2D
+          new IntersectionObserver(
+            (es, obs) => {
+              es.forEach((e) => { if (e.isIntersecting) { lazyLoad3D(); obs.disconnect(); } });
+            },
+            { rootMargin: "600px" }
+          ).observe(stage);
+        }
+        if (stage && !reduced) {
+          // 1) fade the assembly in as it scrolls to center
+          gsap.from(stage, {
+            opacity: 0, duration: 0.7, ease: "power2.out",
+            scrollTrigger: { trigger: stage, start: "top 72%", end: "top 40%", scrub: 0.6 }
+          });
+          // 2) 2D fallback motion — only when the 3D stage didn't take over
+          const lattice2d = stage.querySelector(".p-lattice img");
+          gsap.to(lattice2d, {
+            rotation: 45, ease: "none",
+            scrollTrigger: { trigger: document.body, start: "top top", end: "bottom bottom", scrub: 0.5 }
+          });
+          gsap.set(lattice2d, { transformOrigin: "50% 50%" });
+          // 3) 2D cursor parallax (skipped once 3D owns the stage)
+          if (matchMedia("(hover:hover) and (pointer:fine)").matches) {
+            stage.addEventListener("mousemove", (e) => {
+              if (stage.classList.contains("is-3d")) return; // 3D handles tilt itself
+              const r = stage.getBoundingClientRect();
+              const nx = (e.clientX - r.left) / r.width - 0.5;
+              const ny = (e.clientY - r.top) / r.height - 0.5;
+              gsap.to(stage, {
+                x: nx * 14, y: ny * 14, duration: 0.5, ease: "power2.out", overwrite: "auto"
+              });
+            });
+            stage.addEventListener("mouseleave", () => {
+              if (stage.classList.contains("is-3d")) return;
+              gsap.to(stage, { x: 0, y: 0, duration: 0.7, ease: "elastic.out(1, 0.5)", overwrite: "auto" });
+            });
+          }
+        }
+        // 4) hover a HUD row => isolate that component (works for BOTH 2D + 3D)
+        document.querySelectorAll(".anat-row").forEach((row) => {
+          const s = document.getElementById("anatStage");
+          if (!s) return;
+          row.addEventListener("mouseenter", () => {
+            s.dataset.isolate = row.dataset.part;
+            s.dispatchEvent(new CustomEvent("anat-isolate", { detail: row.dataset.part }));
+          });
+          row.addEventListener("mouseleave", () => {
+            delete s.dataset.isolate;
+            s.dispatchEvent(new CustomEvent("anat-isolate", { detail: null }));
+          });
+        });
+
+        // ── live run-terminal: the machine at work (typewriter job logs) ──
+        const runTerm = document.getElementById("runTerm");
+        const termLog = document.getElementById("termLog");
+        const JOBS = [
+          [ // 0 — data pull
+            "$ machina run --job daily-pull",
+            "› logging in · portal.acme.com … ok",
+            "› reading 42 rows · reconciling … 0 conflicts",
+            "› writing pull_0922.csv … 42/42",
+            "✓ run #0417 done · 38s · receipt → logs/0417.txt",
+          ],
+          [ // 1 — monitoring
+            "$ machina watch --job uptime",
+            "› polling 3 targets every 60s …",
+            "› target b2 degraded · retrying with backoff",
+            "› target b2 back up · logged",
+            "✓ watch armed · 3/3 targets · no action needed",
+          ],
+          [ // 2 — filing
+            "$ machina run --job filing",
+            "› opening 11 records · checking duplicates …",
+            "› 11 filed · 2 held for review · 0 errors",
+            "› emails sent to reviewer@ …",
+            "✓ filing complete · receipt → logs/0418.txt",
+          ],
+        ];
+        let jobIdx = 0, typing = false;
+        function typeJob(lines) {
+          if (typing) return;
+          typing = true;
+          termLog.textContent = "";
+          let li = 0;
+          (function nextLine() {
+            if (li >= lines.length) {          // hold, then loop
+              setTimeout(() => {
+                jobIdx = (jobIdx + 1) % JOBS.length;
+                document.querySelectorAll(".term-tab").forEach((t) =>
+                  t.classList.toggle("is-on", +t.dataset.log === jobIdx));
+                typing = false;
+                nextLine();
+              }, 2600);
+              return;
+            }
+            const line = lines[li];
+            let ci = 0;
+            (function nextChar() {
+              if (ci <= line.length) {
+                termLog.textContent = lines.slice(0, li).join("\n") + (li ? "\n" : "") + line.slice(0, ci);
+                const cur = document.createElement("span");
+                cur.className = "term-cursor";
+                termLog.appendChild(cur);
+                ci++;
+                setTimeout(nextChar, 26 + Math.random() * 40);
+              } else {
+                li++;
+                setTimeout(nextLine, 220);
+              }
+            })();
+          })();
+        }
+        if (runTerm && termLog) {
+          if (reduced) {
+            termLog.textContent = JOBS[0].join("\n") + "\n";
+          } else {
+            document.querySelectorAll(".term-tab").forEach((t) =>
+              t.addEventListener("click", () => {
+                document.querySelectorAll(".term-tab").forEach((x) => x.classList.remove("is-on"));
+                t.classList.add("is-on");
+                jobIdx = +t.dataset.log;
+                typeJob(JOBS[jobIdx]);
+              }));
+            // start when the terminal scrolls into view, not on load
+            const st = ScrollTrigger.create({
+              trigger: runTerm, start: "top 80%",
+              onEnter: () => { if (!termLog.textContent.trim()) typeJob(JOBS[0]); },
+              once: true,
+            });
+            void st;
+          }
+        }
+
+        // ── step progress bars: fill when the process section enters view ──
+        document.querySelectorAll(".step-fill").forEach((f) => {
+          const pct = Math.min(100, +f.dataset.pct || 0);
+          if (reduced) { f.style.transform = `scaleX(${pct / 100})`; return; }
+          ScrollTrigger.create({
+            trigger: f.closest(".step"), start: "top 82%",
+            onEnter: () => (f.style.transform = `scaleX(${pct / 100})`),
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
