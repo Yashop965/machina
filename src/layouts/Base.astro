@@ -230,8 +230,44 @@
           });
         });
 
-        // ── live run-terminal + demo reel: tabbed "machine at work" box ──
-        const demoBox = document.getElementById("demoBox");
+        // ── agent-in-browser mock: the machine working, on loop ──
+        const mock = document.getElementById("agentMock");
+        if (mock) {
+          const hl = mock.querySelector(".am-hl");
+          const cur = mock.querySelector(".am-cursor");
+          const stepEl = mock.querySelector(".am-step");
+          const logEl = mock.querySelector(".am-log-text");
+          const cells = [...mock.querySelectorAll(".am-cell")];
+          const targets = [
+            { cell: cells[0], step: "STEP 01/03 · LOGIN",   log: "› logging in · portal.acme.com … ok" },
+            { cell: cells[1], step: "STEP 02/03 · PULL",    log: "› reading 42 rows · 0 conflicts · written" },
+            { cell: cells[3], step: "STEP 03/03 · SUBMIT",  log: "✓ run #0417 done · 38s · receipt logged" },
+          ];
+          function show(i) {
+            const c = targets[i].cell;
+            const x = c.offsetLeft - 4, y = c.offsetTop - 4;
+            if (reduced) {
+              gsap.set(hl, { width: c.offsetWidth + 8, height: c.offsetHeight + 8, x, y, opacity: 1 });
+              gsap.set(cur, { x: x + c.offsetWidth - 14, y: y + c.offsetHeight - 14, opacity: 1 });
+              stepEl.textContent = targets[i].step;
+              logEl.textContent = targets[i].log;
+              return;
+            }
+            gsap.to(hl, { width: c.offsetWidth + 8, height: c.offsetHeight + 8, x, y, opacity: 1, duration: 0.8, ease: "power3.inOut" });
+            gsap.to(cur, { x: x + c.offsetWidth - 14, y: y + c.offsetHeight - 14, opacity: 1, duration: 0.8, ease: "power3.inOut" });
+            setTimeout(() => { stepEl.textContent = targets[i].step; logEl.textContent = targets[i].log; }, 800);
+          }
+          let mi = 0;
+          show(0);
+          let timer = setInterval(() => { mi = (mi + 1) % targets.length; show(mi); }, 3400);
+          document.addEventListener("visibilitychange", () => {
+            clearInterval(timer);
+            if (!document.hidden && !reduced) timer = setInterval(() => { mi = (mi + 1) % targets.length; show(mi); }, 3400);
+          });
+        }
+
+        // ── live run-terminal (compact box below the reel): types on scroll-in ──
+        const runbox = document.getElementById("runbox");
         const termLog = document.getElementById("termLog");
         const JOBS = [
           [ // 0 — data pull
@@ -290,9 +326,7 @@
             })();
           })();
         }
-        if (demoBox && termLog) {
-          const panes = { reel: demoBox.querySelector('[data-pane="reel"]'), run: demoBox.querySelector('[data-pane="run"]') };
-          const video = panes.reel.querySelector(".demo-video");
+        if (runbox && termLog) {
           const started = { current: false };
           function startTerm() {
             if (started.current) return;
@@ -300,36 +334,22 @@
             if (reduced) termLog.textContent = JOBS[0].join("\n") + "\n";
             else typeJob(JOBS[0]);
           }
-          // demo tab switching
-          document.querySelectorAll(".demo-tab").forEach((tab) => {
-            tab.addEventListener("click", () => {
-              const key = tab.dataset.demo;
-              document.querySelectorAll(".demo-tab").forEach((x) => x.classList.toggle("is-on", x === tab));
-              demoBox.dataset.active = key;
-              panes.reel.hidden = key !== "reel";
-              panes.run.hidden = key !== "run";
-              if (key === "reel" && video) video.play().catch(() => {});
-              if (key === "run") startTerm();
-            });
-          });
-          // job chips (LIVE RUN only) — switching jobs types immediately
+          // job chips — switching jobs retypes immediately
           document.querySelectorAll(".term-tab").forEach((t) =>
             t.addEventListener("click", () => {
               document.querySelectorAll(".term-tab").forEach((x) => x.classList.remove("is-on"));
               t.classList.add("is-on");
               jobIdx = +t.dataset.log;
-              started.current = true; // first chip click also counts as "opened"
+              started.current = true;
               typeJob(JOBS[jobIdx]);
             }));
-          // auto-open: if the box scrolls into view while LIVE RUN is active, start it
+          // start typing when the box scrolls into view
           if (!reduced) {
-            const st = ScrollTrigger.create({
-              trigger: demoBox, start: "top 80%",
-              onEnter: () => { if (demoBox.dataset.active === "run") startTerm(); },
-              once: true,
+            ScrollTrigger.create({
+              trigger: runbox, start: "top 85%",
+              onEnter: startTerm, once: true,
             });
-            void st;
-          }
+          } else startTerm();
         }
 
         // ── step progress bars: fill when the process section enters view ──

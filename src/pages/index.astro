@@ -88,11 +88,30 @@ const nav = [["Proof", "#proof"], ["Process", "#process"], ["Capabilities", "#ca
     </div>
 
     <section class="hero">
-      <div class="hero-meta">
-        <p class="m">You are now entering</p>
-        <p class="m">Scroll to explore</p>
-        <p class="m">AI-native web-agency &amp; automation lab</p>
-        <p class="m">© 2026 Machina</p>
+      <div class="hero-grid">
+        <div class="hero-meta">
+          <p class="m">You are now entering</p>
+          <p class="m">Scroll to explore</p>
+          <p class="m">AI-native web-agency &amp; automation lab</p>
+          <p class="m">© 2026 Machina</p>
+        </div>
+        <!-- animated agent-in-browser mock: the product at a glance -->
+        <div class="agent-mock" id="agentMock" aria-hidden="true">
+          <div class="am-bar">
+            <span class="am-dot"></span>
+            <span>chrome · agent attached</span>
+            <span class="am-step">STEP 01/03 · LOGIN</span>
+          </div>
+          <div class="am-page">
+            <div class="am-cell c1"><span>LOGIN</span><i></i><i></i></div>
+            <div class="am-cell c2"><span>DATA · ROWS</span><i></i><i></i><i></i></div>
+            <div class="am-cell c3"><span>QUEUE</span><em></em></div>
+            <div class="am-cell c4"><span>SAVE</span><b class="am-btn">SUBMIT</b></div>
+            <div class="am-hl"></div>
+            <div class="am-cursor"></div>
+          </div>
+          <div class="am-log"><span class="am-log-dot"></span><span class="am-log-text">› idle · waiting for job</span></div>
+        </div>
       </div>
       <h1 class="mega">MACHINA</h1>
     </section>
@@ -137,23 +156,22 @@ const nav = [["Proof", "#proof"], ["Process", "#process"], ["Capabilities", "#ca
       <p class="kicker" data-reveal>Case studies</p>
       <h2 class="h2" data-reveal>Proof, not promises</h2>
 
-      <!-- demo box: the real reel (SIH2026 pipeline video) + the live run-terminal, tabbed -->
-      <div class="demo-box" id="demoBox" data-active="reel" data-reveal>
-        <div class="demo-tabs" role="tablist">
-          <button class="demo-tab is-on" data-demo="reel" role="tab">Demo reel</button>
-          <button class="demo-tab" data-demo="run" role="tab">Live run</button>
+      <!-- the reel: the real pipeline video, autoplay muted on load -->
+      <video class="reel" id="reelVideo" src="/demo.mp4" muted loop autoplay playsinline preload="metadata" aria-label="Machina demo reel — SIH2026 pipeline walkthrough"></video>
+      <p class="reel-meta" data-reveal>REEL · SIH2026 PIPELINE — 48H BRIEF → SHIPPED VIDEO</p>
+
+      <!-- the black box: compact, centered, just below the video -->
+      <div class="runbox" id="runbox" data-reveal>
+        <div class="runbox-bar">
+          <span class="term-dot"></span>
+          <b>machina · live run</b>
           <span class="term-tags" aria-hidden="true">
             <button class="term-tab is-on" data-log="0">Data pull</button>
             <button class="term-tab" data-log="1">Monitoring</button>
             <button class="term-tab" data-log="2">Filing</button>
           </span>
         </div>
-        <div class="demo-pane" data-pane="reel">
-          <video class="demo-video" src="/demo.mp4" controls playsinline preload="metadata" aria-label="Machina demo reel — SIH2026 pipeline walkthrough"></video>
-        </div>
-        <div class="demo-pane" data-pane="run" hidden>
-          <pre class="term-log" id="termLog" aria-live="off"></pre>
-        </div>
+        <pre class="term-log" id="termLog" aria-live="off"></pre>
       </div>
     </div>
 

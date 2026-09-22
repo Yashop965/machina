@@ -173,12 +173,13 @@ a { color: inherit; text-decoration: none; }
 .tag-hover { transition: border-color 0.25s var(--ease), color 0.25s var(--ease); }
 .tag-hover:hover { border-color: var(--indigo); color: var(--void); }
 
-/* ── hero: negative space + HUD meta-row + mega cropped word ─ */
+/* ── hero: HUD meta + animated agent-in-browser mock + mega cropped word ── */
 .hero {
   flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
   padding: 0 24px; overflow: hidden;
 }
-.hero-meta { display: flex; justify-content: flex-end; flex-wrap: wrap; margin-bottom: 30px; }
+.hero-grid { position: relative; z-index: 2; display: grid; justify-items: center; gap: 34px; }
+.hero-meta { display: flex; justify-content: center; flex-wrap: wrap; margin: 0; }
 .hero-meta .m {
   border-left: 1px solid var(--line); padding-left: 16px; margin: 0 0 0 28px;
   width: 148px; line-height: 1.6;
@@ -186,6 +187,61 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase; color: var(--ink-45);
 }
 .hero-meta .m:first-child { margin-left: 0; }
+
+/* agent mock: a hairline browser where the machine works — the product, at a glance */
+.agent-mock {
+  width: min(620px, 100%);
+  border: 1px solid var(--line);
+  background: var(--card);
+  font-family: var(--mono);
+  position: relative;
+}
+.am-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-bottom: 1px solid var(--line);
+  font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-45);
+}
+.am-dot { width: 8px; height: 8px; background: var(--indigo); animation: term-pulse 1.6s steps(2, end) infinite; flex: none; }
+.am-step { margin-left: auto; color: var(--void); font-weight: 700; white-space: nowrap; }
+.am-page {
+  position: relative;
+  display: grid; grid-template-columns: 1.25fr 1.25fr 1fr 1fr;
+  gap: 10px; padding: 14px;
+}
+.am-cell {
+  position: relative; border: 1px solid var(--line-soft);
+  padding: 26px 10px 10px; min-height: 92px;
+}
+.am-cell > span { position: absolute; top: 7px; right: 9px; font-size: 8px; letter-spacing: 0.16em; color: var(--ink-45); }
+.am-cell i { display: block; height: 3px; background: var(--line); margin: 8px 0; }
+.am-cell em { display: block; width: 10px; height: 10px; border: 1px solid var(--indigo); margin: 8px 0; position: relative; }
+.am-cell em::after { content: ""; position: absolute; inset: 2px; background: var(--indigo); }
+.am-cell .am-btn {
+  position: absolute; bottom: 10px; right: 10px;
+  font: 700 9px/1 var(--mono); letter-spacing: 0.14em;
+  background: var(--void); color: var(--porcelain);
+  padding: 7px 12px;
+}
+.am-hl {
+  position: absolute; width: 0; height: 0;
+  border: 1px solid var(--indigo); background: rgba(46, 44, 100, 0.06);
+  pointer-events: none; opacity: 0;
+}
+.am-cursor {
+  position: absolute; z-index: 3;
+  width: 0; height: 0;
+  border-left: 9px solid var(--void);
+  border-top: 6px solid transparent; border-bottom: 6px solid transparent;
+  pointer-events: none; opacity: 0;
+}
+.am-log {
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 14px; border-top: 1px solid var(--line);
+  font-size: 10px; letter-spacing: 0.1em; color: var(--ink-60);
+  min-height: 38px; white-space: nowrap; overflow: hidden;
+}
+.am-log-dot { width: 7px; height: 7px; background: var(--indigo); animation: term-pulse 1.6s steps(2, end) infinite; flex: none; }
+.am-log-text { overflow: hidden; text-overflow: ellipsis; }
 
 .mega {
   font: 900 calc((100vw - 48px) / 4.8) / 0.8 "Inter";
@@ -233,34 +289,34 @@ a { color: inherit; text-decoration: none; }
 .stat-row strong { display: block; font-family: "Inter"; font-weight: 800; font-size: 30px; letter-spacing: -0.01em; margin: 0 0 4px; color: var(--void); }
 .stat-row span { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-45); }
 
-/* demo box — the machine at work: real reel + live terminal, tabbed (the one dark block) */
-.demo-box {
+/* case study: the reel (autoplays on load) + a compact, centered live-run box below it */
+.reel {
+  display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+  background: var(--void); border: 1px solid var(--line); margin: 0 0 10px;
+}
+.reel-meta {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  color: var(--ink-45); margin: 0 0 34px;
+}
+.runbox {
   border: 1px solid var(--line);
   background: var(--void);
   color: var(--porcelain);
   font-family: var(--mono);
-  margin: 0 0 56px;
-  position: relative;
+  max-width: 540px;
+  margin: 0 auto;
 }
-.demo-tabs {
-  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-  padding: 13px 16px;
+.runbox-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 11px 14px;
   border-bottom: 1px solid rgba(46, 44, 100, 0.55);
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(244, 249, 251, 0.55);
 }
-.demo-tab {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
-  background: transparent; border: 1px solid rgba(46, 44, 100, 0.55);
-  color: rgba(244, 249, 251, 0.55); padding: 6px 12px; cursor: pointer;
-  transition: all 0.25s var(--ease);
-}
-.demo-tab:hover { color: var(--porcelain); border-color: var(--porcelain); }
-.demo-tab.is-on { background: var(--porcelain); color: var(--void); border-color: var(--porcelain); }
-/* job chips only live inside the LIVE RUN tab */
-.demo-box .term-tags { display: none; }
-.demo-box[data-active="run"] .term-tags { display: inline-flex; gap: 8px; margin-left: auto; }
-.demo-box[data-active="run"] .term-tab.is-on { border-color: var(--porcelain); }
-.demo-pane { display: block; }
-.demo-video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: var(--void); }
+.runbox-bar b { color: var(--porcelain); font-weight: 700; }
+.runbox .term-tags { display: inline-flex; gap: 8px; margin-left: auto; }
+.runbox .term-tab.is-on { border-color: var(--porcelain); }
+.runbox .term-log { min-height: 132px; padding: 16px 14px; font-size: 11.5px; }
 .term {
   border: 1px solid var(--line);
   background: var(--void);
@@ -538,11 +594,17 @@ footer { border-top: 1px solid var(--line); }
   .nav { gap: 16px; }
   .nav a { font-size: 10px; letter-spacing: 0.1em; white-space: nowrap; }
   /* HUD meta: 2×2 grid, text wraps within each cell — no right-edge clipping */
-  .hero-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 18px; justify-content: flex-start; }
+  .hero-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 22px 18px; justify-content: center; }
   .hero-meta .m {
     width: auto; margin: 0; border-left: 1px solid var(--line); padding-left: 14px;
     line-height: 1.7; font-size: 9px; letter-spacing: 0.08em;
   }
+  /* agent mock: 2×2 cells on phones */
+  .hero-grid { gap: 22px; }
+  .am-page { grid-template-columns: 1fr 1fr; padding: 12px; gap: 8px; }
+  .am-cell { min-height: 74px; padding: 22px 8px 8px; }
+  .runbox { max-width: 100%; }
+  .runbox .term-tags { margin-left: 0; }
   .intro-grid { grid-template-columns: 1fr; gap: 30px; align-items: start; }
   .case { grid-template-columns: 1fr; gap: 8px; padding: 36px 0; }
   .case .num { padding-top: 0; }
