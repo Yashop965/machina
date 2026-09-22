@@ -26,21 +26,11 @@ export function initAnat3D(stage, canvas) {
   const LAYERS = [
     { part: "ring",    url: "/part_ring.svg",     z: -1.0, size: 2.6 },
     { part: "lattice", url: "/part_geometric.svg", z: 0.0, size: 1.4 },
-    { part: "face",    url: "/part_face.svg",     z: 0.8, size: 0.95 },
+    // face PLATE: detail + opaque silhouette (stage-bg fill) — the silhouette is
+    // the knockout window: it stops the lattice along the goddess's real outline
+    { part: "face",    url: "/part_face_plate.svg", z: 0.8, size: 0.95 },
   ];
   const meshes = {};
-
-  // Opaque "window" disc — the piece the 2D fallback has and the 3D version
-  // originally dropped: it sits between lattice (z 0) and face (z 0.8) so the
-  // dense web stops just outside the face's ink (lattice ink r≈0.57 vs face
-  // ink r≈0.36 measured), leaving a visible lattice band while the face reads
-  // cleanly IN FRONT instead of woven into the web.
-  const DISC_R = 0.44;
-  const DISC_Z = 0.55;
-  const discMat = new THREE.MeshBasicMaterial({
-    color: 0xeaefef, /* opaque composite of --card over porcelain, matches the stage bg */
-    transparent: true, opacity: 1, depthWrite: true, side: THREE.DoubleSide,
-  });
 
   async function loadPart(def) {
     const img = new Image();
@@ -69,20 +59,12 @@ export function initAnat3D(stage, canvas) {
 
   Promise.all(LAYERS.map(loadPart))
     .then(() => {
-      // window disc (between lattice and face)
-      const disc = new THREE.Mesh(new THREE.CircleGeometry(DISC_R, 64), discMat);
-      disc.position.z = DISC_Z;
-      group.add(disc);
-
       stage.classList.add("is-3d"); // hides the 2D <img> parts + knockout
-      const ops = { ring: 1, lattice: 1, face: 1, disc: 1 }; // live opacities
-      let targetOps = { ring: 1, lattice: 1, face: 1, disc: 1 };
+      const ops = { ring: 1, lattice: 1, face: 1 }; // live opacities
+      let targetOps = { ring: 1, lattice: 1, face: 1 };
       stage.addEventListener("anat-isolate", (e) => {
         const iso = e.detail;
         LAYERS.forEach((l) => (targetOps[l.part] = iso && iso !== l.part ? 0.1 : 1));
-        // the disc belongs to the lattice "band" — dim it whenever the lattice or
-        // ring is isolated, keep it when the face is isolated (face window stays clean)
-        targetOps.disc = !iso || iso === "face" ? 1 : 0.1;
       });
 
       // mouse tilt (fine pointers) — group rotates toward the cursor
@@ -121,7 +103,6 @@ export function initAnat3D(stage, canvas) {
         // per-part motion (matches the 2D version's character)
         if (meshes.ring) meshes.ring.rotation.z = spin(t);
         if (meshes.face) meshes.face.position.y = bob(t);
-        disc.position.y = bob(t); // window travels with the face
         // lattice scroll-scrub (same feel as GSAP version):
         if (meshes.lattice) {
           const doc = document.documentElement;
@@ -136,11 +117,6 @@ export function initAnat3D(stage, canvas) {
           ops[l.part] += (targetOps[l.part] - ops[l.part]) * 0.14;
           m.material.opacity = ops[l.part];
         });
-        ops.disc += (targetOps.disc - ops.disc) * 0.14;
-        discMat.opacity = ops.disc;
-        // while the window is dimmed (lattice/ring isolated) it must stop
-        // occluding, or the lattice behind it would look cut out
-        discMat.depthWrite = ops.disc > 0.5;
 
         renderer.render(scene, camera);
       }
