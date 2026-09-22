@@ -230,8 +230,8 @@
           });
         });
 
-        // ── live run-terminal: the machine at work (typewriter job logs) ──
-        const runTerm = document.getElementById("runTerm");
+        // ── live run-terminal + demo reel: tabbed "machine at work" box ──
+        const demoBox = document.getElementById("demoBox");
         const termLog = document.getElementById("termLog");
         const JOBS = [
           [ // 0 — data pull
@@ -290,21 +290,42 @@
             })();
           })();
         }
-        if (runTerm && termLog) {
-          if (reduced) {
-            termLog.textContent = JOBS[0].join("\n") + "\n";
-          } else {
-            document.querySelectorAll(".term-tab").forEach((t) =>
-              t.addEventListener("click", () => {
-                document.querySelectorAll(".term-tab").forEach((x) => x.classList.remove("is-on"));
-                t.classList.add("is-on");
-                jobIdx = +t.dataset.log;
-                typeJob(JOBS[jobIdx]);
-              }));
-            // start when the terminal scrolls into view, not on load
+        if (demoBox && termLog) {
+          const panes = { reel: demoBox.querySelector('[data-pane="reel"]'), run: demoBox.querySelector('[data-pane="run"]') };
+          const video = panes.reel.querySelector(".demo-video");
+          const started = { current: false };
+          function startTerm() {
+            if (started.current) return;
+            started.current = true;
+            if (reduced) termLog.textContent = JOBS[0].join("\n") + "\n";
+            else typeJob(JOBS[0]);
+          }
+          // demo tab switching
+          document.querySelectorAll(".demo-tab").forEach((tab) => {
+            tab.addEventListener("click", () => {
+              const key = tab.dataset.demo;
+              document.querySelectorAll(".demo-tab").forEach((x) => x.classList.toggle("is-on", x === tab));
+              demoBox.dataset.active = key;
+              panes.reel.hidden = key !== "reel";
+              panes.run.hidden = key !== "run";
+              if (key === "reel" && video) video.play().catch(() => {});
+              if (key === "run") startTerm();
+            });
+          });
+          // job chips (LIVE RUN only) — switching jobs types immediately
+          document.querySelectorAll(".term-tab").forEach((t) =>
+            t.addEventListener("click", () => {
+              document.querySelectorAll(".term-tab").forEach((x) => x.classList.remove("is-on"));
+              t.classList.add("is-on");
+              jobIdx = +t.dataset.log;
+              started.current = true; // first chip click also counts as "opened"
+              typeJob(JOBS[jobIdx]);
+            }));
+          // auto-open: if the box scrolls into view while LIVE RUN is active, start it
+          if (!reduced) {
             const st = ScrollTrigger.create({
-              trigger: runTerm, start: "top 80%",
-              onEnter: () => { if (!termLog.textContent.trim()) typeJob(JOBS[0]); },
+              trigger: demoBox, start: "top 80%",
+              onEnter: () => { if (demoBox.dataset.active === "run") startTerm(); },
               once: true,
             });
             void st;

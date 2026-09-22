@@ -137,18 +137,23 @@ const nav = [["Proof", "#proof"], ["Process", "#process"], ["Capabilities", "#ca
       <p class="kicker" data-reveal>Case studies</p>
       <h2 class="h2" data-reveal>Proof, not promises</h2>
 
-      <!-- live run-terminal: the machine at work (video swaps in when Yash drops the .mp4) -->
-      <div class="term" id="runTerm" data-reveal>
-        <div class="term-bar">
-          <span class="term-dot"></span>
-          <span>agent.run · daily pull · <b id="termJob">run #0417</b></span>
+      <!-- demo box: the real reel (SIH2026 pipeline video) + the live run-terminal, tabbed -->
+      <div class="demo-box" id="demoBox" data-active="reel" data-reveal>
+        <div class="demo-tabs" role="tablist">
+          <button class="demo-tab is-on" data-demo="reel" role="tab">Demo reel</button>
+          <button class="demo-tab" data-demo="run" role="tab">Live run</button>
           <span class="term-tags" aria-hidden="true">
             <button class="term-tab is-on" data-log="0">Data pull</button>
             <button class="term-tab" data-log="1">Monitoring</button>
             <button class="term-tab" data-log="2">Filing</button>
           </span>
         </div>
-        <pre class="term-log" id="termLog" aria-live="off"></pre>
+        <div class="demo-pane" data-pane="reel">
+          <video class="demo-video" src="/demo.mp4" controls playsinline preload="metadata" aria-label="Machina demo reel — SIH2026 pipeline walkthrough"></video>
+        </div>
+        <div class="demo-pane" data-pane="run" hidden>
+          <pre class="term-log" id="termLog" aria-live="off"></pre>
+        </div>
       </div>
     </div>
 
