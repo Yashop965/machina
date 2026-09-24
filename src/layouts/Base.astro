@@ -184,15 +184,28 @@
           });
         }
 
-        // ── scene-graph beats: play in view, pause out of view (3-way decode guard) ──
-        document.querySelectorAll("video.beat").forEach((v) => {
-          const play = () => { v.muted = true; v.play().catch(() => {}); };
+        // ── scene-graph beats: muted in-view autoplay + one-click sound toggle ──
+        // Browsers block autoplay-with-sound, so beats start muted; the visitor
+        // clicks the SOUND button to hear the narration (muted toggle is the only
+        // path to un-mute autoplay, which is why a toggle exists at all).
+        document.querySelectorAll(".beat-frame").forEach((frame) => {
+          const v = frame.querySelector("video.beat");
+          const btn = frame.querySelector(".beat-sound");
+          const play = () => { if (!v.muted || v.paused) { v.play().catch(() => {}); } };
           const stop = () => v.pause();
-          if (reduced) { v.removeAttribute("autoplay"); stop(); return; }
+          if (reduced) { stop(); if (btn) btn.disabled = true; return; }
           new IntersectionObserver(
             (es) => es.forEach((e) => (e.isIntersecting ? play() : stop())),
             { threshold: 0.3 }
-          ).observe(v);
+          ).observe(frame);
+          if (btn) {
+            btn.addEventListener("click", () => {
+              v.muted = !v.muted;
+              btn.setAttribute("aria-pressed", String(!v.muted));
+              btn.textContent = v.muted ? "SOUND · OFF" : "SOUND · ON";
+              if (!v.muted && v.paused) v.play().catch(() => {});
+            });
+          }
         });
 
         // ── anatomy of the mark: the 3 components come alive ──

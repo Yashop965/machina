@@ -247,7 +247,10 @@ const nav = [["Proof", "#proof"], ["Process", "#process"], ["The Math", "#estima
       </div>
 
       <!-- beat 1: watch it work (scene-graph screengraph, narrated) -->
-      <video class="beat" src="/beat_run.mp4" muted loop autoplay playsinline preload="metadata" aria-label="Machina agent run - task board moves LOGIN, PULL, SUBMIT, MONITOR with live terminal"></video>
+      <div class="beat-frame">
+        <video class="beat" src="/beat_run.mp4" muted loop playsinline preload="metadata" aria-label="Machina agent run - task board moves LOGIN, PULL, SUBMIT, MONITOR with live terminal"></video>
+        <button class="beat-sound" type="button" aria-pressed="false">SOUND · OFF</button>
+      </div>
       <p class="beat-meta" data-reveal>BEAT 01 · WATCH IT WORK - LOGIN, PULL, SUBMIT, MONITOR. BUILT IN-BROWSER, NOTHING RECORDED</p>
     </div>
   </section>
@@ -269,7 +272,10 @@ const nav = [["Proof", "#proof"], ["Process", "#process"], ["The Math", "#estima
       </div>
 
       <!-- beat 2: the receipts (scene-graph screengraph, narrated) -->
-      <video class="beat" src="/beat_receipts.mp4" muted loop autoplay playsinline preload="metadata" aria-label="Machina receipts - raw form data on the left, sanitized payload on the right, zero PII crosses the line"></video>
+      <div class="beat-frame">
+        <video class="beat" src="/beat_receipts.mp4" muted loop playsinline preload="metadata" aria-label="Machina receipts - raw form data on the left, sanitized payload on the right, zero PII crosses the line"></video>
+        <button class="beat-sound" type="button" aria-pressed="false">SOUND · OFF</button>
+      </div>
       <p class="beat-meta" data-reveal>BEAT 02 · THE RECEIPTS - RAW IN, REDACTED OUT. ZERO PII CROSSES THE LINE</p>
     </div>
   </section>
