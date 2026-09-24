@@ -183,6 +183,18 @@
             });
           });
         }
+
+        // ── scene-graph beats: play in view, pause out of view (3-way decode guard) ──
+        document.querySelectorAll("video.beat").forEach((v) => {
+          const play = () => { v.muted = true; v.play().catch(() => {}); };
+          const stop = () => v.pause();
+          if (reduced) { v.removeAttribute("autoplay"); stop(); return; }
+          new IntersectionObserver(
+            (es) => es.forEach((e) => (e.isIntersecting ? play() : stop())),
+            { threshold: 0.3 }
+          ).observe(v);
+        });
+
         // ── anatomy of the mark: the 3 components come alive ──
         const stage = document.getElementById("anatStage");
         const anatCanvas = document.getElementById("anatCanvas");
