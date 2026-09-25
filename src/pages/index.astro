@@ -156,8 +156,11 @@ const nav = [["Proof", "#proof"], ["Process", "#process"], ["The Math", "#estima
       <p class="kicker" data-reveal>Case studies</p>
       <h2 class="h2" data-reveal>Proof, not promises</h2>
 
-      <!-- the reel: the real pipeline video, autoplay muted on load -->
-      <video class="reel" id="reelVideo" src="/demo.mp4" muted loop autoplay playsinline preload="metadata" aria-label="Machina browser agent reel — on-device perception, PII never leaves the machine"></video>
+      <!-- the reel: the v3 hero (seal open -> live run -> receipts -> CTA), muted in-view autoplay + one-click sound toggle (same pattern as the beats) -->
+      <div class="beat-frame">
+        <video class="beat" src="/demo.mp4" muted loop playsinline preload="metadata" aria-label="Machina browser agent reel - seal open, live run, receipts, CTA. On-device, PII never leaves the machine."></video>
+        <button class="beat-sound" type="button" aria-pressed="false">SOUND · OFF</button>
+      </div>
       <p class="reel-meta" data-reveal>REEL · MACHINA BROWSER AGENT — ON-DEVICE, LOGGED RECEIPTS, ZERO PII EGRESS</p>
 
       <!-- the black box: compact, centered, just below the video -->
